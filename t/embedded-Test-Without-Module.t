@@ -52,6 +52,7 @@ eval q{
     local $^W = 0;
 
 #line 109 lib/Test/Without/Module.pm
+
   use Test::Without::Module qw( My::Module );
 
   # Now, loading of My::Module fails :

@@ -4,7 +4,7 @@ use File::Temp;
 use Carp qw( croak );
 
 use vars qw( $VERSION );
-$VERSION = 0.05;
+$VERSION = 0.06;
 
 use constant SLOT => "Test::Without::Module::scope";
 use constant REQUIRE_ERROR => q/Can't locate %s.pm in @INC (@INC contains: %s)/;
@@ -33,7 +33,7 @@ sub import {
   for my $module (@forbidden_modules) {
     scrub( $module );
   };
-  
+
   unshift @INC, \&fake_module ;
 };
 
@@ -106,6 +106,7 @@ Test::Without::Module - Test fallback behaviour in absence of modules
 =head1 SYNOPSIS
 
 =for example begin
+
   use Test::Without::Module qw( My::Module );
 
   # Now, loading of My::Module fails :
@@ -149,10 +150,10 @@ if you are testing and/or debugging this module.
 =head1 CREDITS
 
 Much improvement must be thanked to Aristotle from PerlMonks, he pointed me
-to a much less convoluted way to fake a module at 
+to a much less convoluted way to fake a module at
 L<http://www.perlmonks.org/index.pl?node=192635>.
 
-I also discussed with him an even more elegant way of overriding 
+I also discussed with him an even more elegant way of overriding
 CORE::GLOBAL::require, but the parsing of the overridden subroutine
 didn't work out the way I wanted it - CORE::require didn't recognize
 barewords as such anymore.

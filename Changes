@@ -1,5 +1,9 @@
 Revision history for Perl extension Test::Without::Module.
 
+0.06 20030320
+  - fixed the inline test pod
+  - Now needs Test::Pod 0.95 (or skips the pod test)
+
 0.03 20030217
   - Released on CPAN
   - Fixes so the pod for the fake module dosen't appear
