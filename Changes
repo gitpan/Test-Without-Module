@@ -1,6 +1,13 @@
 Revision history for Perl extension Test::Without::Module.
 
-0.01  Sat Feb 15 21:14:45 2003
-	- original version; created by h2xs 1.21 with options
-		-Xn Test::Without::Module
+0.03 20030217
+  - Released on CPAN
+  - Fixes so the pod for the fake module dosen't appear
+    in the main pod.
 
+0.02 20030216
+  - Released on CPAN
+
+0.01  Sat Feb 15 21:14:45 2003
+  - original version; created by h2xs 1.21 with options
+    -Xn Test::Without::Module

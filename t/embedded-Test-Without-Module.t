@@ -33,9 +33,9 @@ tie *STDERR, 'Catch', '_STDERR_' or die $!;
 
 SKIP: {
     # A header testing whether we find all prerequisites :
-      # Check for module File::Temp
-  eval { require File::Temp };
-  skip "Need module File::Temp to run this test", 1
+      # Check for module My::Module
+  eval { require My::Module };
+  skip "Need module My::Module to run this test", 1
     if $@;
 
   # Check for module Test::Without::Module
@@ -51,23 +51,23 @@ eval q{
   my $example = sub {
     local $^W = 0;
 
-#line 115 lib/Test/Without/Module.pm
-  use Test::Without::Module qw( File::Temp );
+#line 118 lib/Test/Without/Module.pm
+  use Test::Without::Module qw( My::Module );
 
-  # Now, loading of File::Temp fails :
-  eval { require File::Temp; };
+  # Now, loading of My::Module fails :
+  eval { require My::Module; };
   warn $@ if $@;
 
   # Now it works again
-  eval q{ no Test::Without::Module qw( File::Temp ) };
-  eval { require File::Temp; };
-  print "Found File::Temp" unless $@;
+  eval q{ no Test::Without::Module qw( My::Module ) };
+  eval { require My::Module; };
+  print "Found My::Module" unless $@;
 
 ;
 
   }
 };
-is($@, '', "example from line 115");
+is($@, '', "example from line 118");
 
 };
 SKIP: {

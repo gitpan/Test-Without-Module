@@ -4,7 +4,7 @@ use File::Temp;
 use Carp qw( croak );
 
 use vars qw( $VERSION );
-$VERSION = 0.02;
+$VERSION = 0.03;
 
 use constant SLOT => "Test::Without::Module::scope";
 
@@ -14,7 +14,7 @@ sub get_forbidden_list {
   #warn "Called from ",caller,"\n";
   #warn "Creating new list"
   #  unless exists $^H{SLOT()};
-  #exists $^H{SLOT()} 
+  #exists $^H{SLOT()}
   #  ? { $^H{SLOT()} }
   #  : { }
   \%forbidden
@@ -43,31 +43,34 @@ sub fake_module {
     warn $@ if $@;
 
     my $forbidden = get_forbidden_list;
-    
+
     my $modulename = file2module($module_file);
 
     # Deliver a faked, nonworking module
     if (grep { $modulename =~ $_ } keys %$forbidden) {
 
-      my $fh = File::Temp::tmpfile();
-      print $fh <<MODULE;
-package $modulename;
-
-=head1 NAME
-
-$modulename
-
-=head1 SYNOPSIS
-
-!!! THIS IS A FAKED VERSION OF $modulename !!!
-!!! IT WAS CREATED BY Test::Without::Module          !!!
-!!! IT SHOULD NEVER END UP IN YOUR lib/ OR site/lib/ !!!
-
-=cut
-
-sub import { undef };
-0;
+      my $faked_module = <<MODULE;
+|       package $modulename;
+|
+|       =head1 NAME
+|
+|       $modulename
+|
+|       =head1 SYNOPSIS
+|
+|       !!! THIS IS A FAKED VERSION OF $modulename !!!
+|       !!! IT WAS CREATED BY Test::Without::Module          !!!
+|       !!! IT SHOULD NEVER END UP IN YOUR lib/ OR site/lib/ !!!
+|
+|       =cut
+|
+|       sub import { undef };
+|       0;
 MODULE
+      $faked_module =~ s!\|\s+!!gsm;
+
+      my $fh = File::Temp::tmpfile();
+      print $fh $faked_module;
       seek $fh, 0,0;
       return $fh;
     };
@@ -112,16 +115,16 @@ Test::Without::Module - Test fallback behaviour in absence of modules
 =head1 SYNOPSIS
 
 =for example begin
-  use Test::Without::Module qw( File::Temp );
+  use Test::Without::Module qw( My::Module );
 
-  # Now, loading of File::Temp fails :
-  eval { require File::Temp; };
+  # Now, loading of My::Module fails :
+  eval { require My::Module; };
   warn $@ if $@;
 
   # Now it works again
-  eval q{ no Test::Without::Module qw( File::Temp ) };
-  eval { require File::Temp; };
-  print "Found File::Temp" unless $@;
+  eval q{ no Test::Without::Module qw( My::Module ) };
+  eval { require My::Module; };
+  print "Found My::Module" unless $@;
 
 =for example end
 
