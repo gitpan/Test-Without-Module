@@ -1,0 +1,6 @@
+Revision history for Perl extension Test::Without::Module.
+
+0.01  Sat Feb 15 21:14:45 2003
+	- original version; created by h2xs 1.21 with options
+		-Xn Test::Without::Module
+
