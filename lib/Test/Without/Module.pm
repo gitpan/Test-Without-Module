@@ -4,9 +4,10 @@ use File::Temp;
 use Carp qw( croak );
 
 use vars qw( $VERSION );
-$VERSION = 0.03;
+$VERSION = 0.05;
 
 use constant SLOT => "Test::Without::Module::scope";
+use constant REQUIRE_ERROR => q/Can't locate %s.pm in @INC (@INC contains: %s)/;
 
 use vars qw( %forbidden );
 
@@ -32,11 +33,24 @@ sub import {
   for my $module (@forbidden_modules) {
     scrub( $module );
   };
-
-  # Move our handler to the front of the list
-  @INC = grep { $_ ne \&fake_module } @INC;
-  unshift @INC, \&fake_module;
+  
+  unshift @INC, \&fake_module ;
 };
+
+#use vars qw( $name );
+#*CORE::GLOBAL::require = sub ($) {
+#  my $forbidden = get_forbidden_list;
+#  local $_ = $_[0];
+#  for my $forbidden_module (keys %{$forbidden}) {
+#      $_ =~ /$forbidden_module/ or next;
+#      s!::!/!g;
+#      require Carp;
+#      Carp::croak(sprintf REQUIRE_ERROR, $_, "@INC");
+#  }
+#  print "Loading original via @_\n";
+#  goto CORE::require;
+#  #CORE::require(@_);
+#};
 
 sub fake_module {
     my ($self,$module_file,$member_only) = @_;
@@ -48,31 +62,8 @@ sub fake_module {
 
     # Deliver a faked, nonworking module
     if (grep { $modulename =~ $_ } keys %$forbidden) {
-
-      my $faked_module = <<MODULE;
-|       package $modulename;
-|
-|       =head1 NAME
-|
-|       $modulename
-|
-|       =head1 SYNOPSIS
-|
-|       !!! THIS IS A FAKED VERSION OF $modulename !!!
-|       !!! IT WAS CREATED BY Test::Without::Module          !!!
-|       !!! IT SHOULD NEVER END UP IN YOUR lib/ OR site/lib/ !!!
-|
-|       =cut
-|
-|       sub import { undef };
-|       0;
-MODULE
-      $faked_module =~ s!\|\s+!!gsm;
-
-      my $fh = File::Temp::tmpfile();
-      print $fh $faked_module;
-      seek $fh, 0,0;
-      return $fh;
+      my @faked_module = ("package $modulename;","0;");
+      return sub { defined ( $_ = shift @faked_module ) };
     };
 };
 
@@ -151,9 +142,20 @@ if you are testing and/or debugging this module.
 
 =over 4
 
-=item * There is no lexicalic scoping (yet)
+=item * There is no lexicalic scoping
 
 =back
+
+=head1 CREDITS
+
+Much improvement must be thanked to Aristotle from PerlMonks, he pointed me
+to a much less convoluted way to fake a module at 
+L<http://www.perlmonks.org/index.pl?node=192635>.
+
+I also discussed with him an even more elegant way of overriding 
+CORE::GLOBAL::require, but the parsing of the overridden subroutine
+didn't work out the way I wanted it - CORE::require didn't recognize
+barewords as such anymore.
 
 =head1 AUTHOR
 

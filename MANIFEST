@@ -4,8 +4,8 @@ MANIFEST
 README
 lib/Test/Without/Module.pm
 t/01-api.t
-t/02-block-module.t
-t/03-unblock-module.t
+t/02-block-use-module.t
+t/03-block-require-module.t
 t/04-import-export.t
 t/99-pod.t
 t/embedded-Test-Without-Module.t

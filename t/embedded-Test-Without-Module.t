@@ -51,7 +51,7 @@ eval q{
   my $example = sub {
     local $^W = 0;
 
-#line 118 lib/Test/Without/Module.pm
+#line 109 lib/Test/Without/Module.pm
   use Test::Without::Module qw( My::Module );
 
   # Now, loading of My::Module fails :
@@ -67,7 +67,7 @@ eval q{
 
   }
 };
-is($@, '', "example from line 118");
+is($@, '', "example from line 109");
 
 };
 SKIP: {
