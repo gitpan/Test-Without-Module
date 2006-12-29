@@ -1,5 +1,8 @@
 Revision history for Perl extension Test::Without::Module.
 
+0.08 20061229
+  - Removed superfluous File::Temp usage from module
+
 0.07 20061229
   - No more inline pod tests
   - No code changes since 0.06
