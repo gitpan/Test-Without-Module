@@ -4,7 +4,7 @@ use File::Temp;
 use Carp qw( croak );
 
 use vars qw( $VERSION );
-$VERSION = 0.06;
+$VERSION = 0.07;
 
 use constant SLOT => "Test::Without::Module::scope";
 use constant REQUIRE_ERROR => q/Can't locate %s.pm in @INC (@INC contains: %s)/;
@@ -12,12 +12,6 @@ use constant REQUIRE_ERROR => q/Can't locate %s.pm in @INC (@INC contains: %s)/;
 use vars qw( %forbidden );
 
 sub get_forbidden_list {
-  #warn "Called from ",caller,"\n";
-  #warn "Creating new list"
-  #  unless exists $^H{SLOT()};
-  #exists $^H{SLOT()}
-  #  ? { $^H{SLOT()} }
-  #  : { }
   \%forbidden
 };
 
@@ -36,21 +30,6 @@ sub import {
 
   unshift @INC, \&fake_module ;
 };
-
-#use vars qw( $name );
-#*CORE::GLOBAL::require = sub ($) {
-#  my $forbidden = get_forbidden_list;
-#  local $_ = $_[0];
-#  for my $forbidden_module (keys %{$forbidden}) {
-#      $_ =~ /$forbidden_module/ or next;
-#      s!::!/!g;
-#      require Carp;
-#      Carp::croak(sprintf REQUIRE_ERROR, $_, "@INC");
-#  }
-#  print "Loading original via @_\n";
-#  goto CORE::require;
-#  #CORE::require(@_);
-#};
 
 sub fake_module {
     my ($self,$module_file,$member_only) = @_;
@@ -138,6 +117,16 @@ modules or an empty hash if none are currently forbidden. This is convenient
 if you are testing and/or debugging this module.
 
 =cut
+
+=head1 ONE LINER
+
+A neat trick for using this module from the command line
+was mentioned to me by NUFFIN:
+
+  perl -MTest::Without::Module=Some::Module -w -Iblib/lib t/SomeModule.t
+
+That way, you can easily see how your module or test file behaves
+when a certain module is unavailable.
 
 =head1 BUGS
 
