@@ -1,5 +1,12 @@
 Revision history for Perl extension Test::Without::Module.
 
+0.09 20061231
+  - Added more consistency tests
+  - Added Jerrad Pierce to the list of those
+    who mentioned the command line use. I forgot
+    the usage NUFFIN had given, so both were
+    genuinely new to me.
+
 0.08 20061229
   - Removed superfluous File::Temp usage from module
 

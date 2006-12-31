@@ -3,7 +3,7 @@ use strict;
 use Carp qw( croak );
 
 use vars qw( $VERSION );
-$VERSION = 0.08;
+$VERSION = 0.09;
 
 use constant SLOT => "Test::Without::Module::scope";
 use constant REQUIRE_ERROR => q/Can't locate %s.pm in @INC (@INC contains: %s)/;
@@ -145,6 +145,11 @@ I also discussed with him an even more elegant way of overriding
 CORE::GLOBAL::require, but the parsing of the overridden subroutine
 didn't work out the way I wanted it - CORE::require didn't recognize
 barewords as such anymore.
+
+NUFFIN and Jerrad Pierce pointed out the convenient
+use from the command line to interactively watch the
+behaviour of the test suite and module in absence
+of a module.
 
 =head1 AUTHOR
 
