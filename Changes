@@ -1,5 +1,13 @@
 Revision history for Perl extension Test::Without::Module.
 
+Todo:
+  - Add way to allow only core modules (suggested by SREZIC)
+
+0.10 20080804
+  - Added missing File::Slurp prerequisite. Thanks to ANDK and
+    the CPAN smoke testers to alert me to this
+  - No functional changes. No upgrade from 0.09 is necessary.
+
 0.09 20061231
   - Added more consistency tests
   - Added Jerrad Pierce to the list of those

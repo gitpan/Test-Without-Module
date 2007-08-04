@@ -3,7 +3,7 @@ use strict;
 use Carp qw( croak );
 
 use vars qw( $VERSION );
-$VERSION = 0.09;
+$VERSION = 0.10;
 
 use constant SLOT => "Test::Without::Module::scope";
 use constant REQUIRE_ERROR => q/Can't locate %s.pm in @INC (@INC contains: %s)/;
