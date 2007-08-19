@@ -3,6 +3,10 @@ Revision history for Perl extension Test::Without::Module.
 Todo:
   - Add way to allow only core modules (suggested by SREZIC)
 
+0.11 20080819
+  - File::Slurp is now no prerequisite anymore - the test
+    requiring it is now optional
+
 0.10 20080804
   - Added missing File::Slurp prerequisite. Thanks to ANDK and
     the CPAN smoke testers to alert me to this
