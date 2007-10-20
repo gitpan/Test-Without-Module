@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Test-Without-Module
-version:             0.13
+version:             0.14
 abstract:            Test fallback behaviour in absence of modules
 license:             ~
 generated_by:        ExtUtils::MakeMaker version 6.36_01
