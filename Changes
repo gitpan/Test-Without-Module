@@ -3,11 +3,20 @@ Revision history for Perl extension Test::Without::Module.
 Todo:
   - Add way to allow only core modules (suggested by SREZIC)
 
-0.11 20080819
+0.13 20071020
+  - Restored compatibility of the tests with Perl 5.005, reported by SREZIC
+  . No functional changes, no upgrade is necessary
+
+0.12 20071020
+  - Fixed RT [rt.cpan.org #24735], reported by Slaven Rezic
+    This seems to have been some really weird interaction or maybe
+    eating of $@.
+
+0.11 20070819
   - File::Slurp is now no prerequisite anymore - the test
     requiring it is now optional
 
-0.10 20080804
+0.10 20070804
   - Added missing File::Slurp prerequisite. Thanks to ANDK and
     the CPAN smoke testers to alert me to this
   - No functional changes. No upgrade from 0.09 is necessary.

@@ -3,10 +3,7 @@ use strict;
 use Carp qw( croak );
 
 use vars qw( $VERSION );
-$VERSION = 0.11;
-
-use constant SLOT => "Test::Without::Module::scope";
-use constant REQUIRE_ERROR => q/Can't locate %s.pm in @INC (@INC contains: %s)/;
+$VERSION = 0.13;
 
 use vars qw( %forbidden );
 
@@ -17,7 +14,6 @@ sub get_forbidden_list {
 sub import {
   my ($self,@forbidden_modules) = @_;
 
-  # First, create a local copy of the active scope
   my $forbidden = get_forbidden_list;
   $forbidden->{$_} = $_
     for @forbidden_modules;
@@ -27,19 +23,20 @@ sub import {
     scrub( $module );
   };
 
-  unshift @INC, \&fake_module ;
+  unshift @INC, \&fake_module;
 };
 
 sub fake_module {
     my ($self,$module_file,$member_only) = @_;
-    warn $@ if $@;
+    #warn $@ if $@; # Don't touch $@, or .al files will not load anymore????
 
     my $forbidden = get_forbidden_list;
 
     my $modulename = file2module($module_file);
 
     # Deliver a faked, nonworking module
-    if (grep { $modulename =~ $_ } keys %$forbidden) {
+    #if (grep { $modulename =~ /\Q$_\E/ } keys %$forbidden) {
+    if (exists $forbidden->{$modulename}) {
       my @faked_module = ("package $modulename;","0;");
       return sub { defined ( $_ = shift @faked_module ) };
     };
@@ -71,7 +68,8 @@ sub scrub {
   my $key;
   for $key (keys %INC) {
     delete $INC{$key}
-      if (file2module($key) =~ $module);
+      if (file2module($key) =~ /\Q$module\E$/);
+      #if (file2module($key) =~ $module);
   };
 };
 
@@ -153,11 +151,15 @@ of a module.
 
 =head1 AUTHOR
 
-Max Maischein, E<lt>corion@cpan.orgE<gt>
+Copyright (c) 2003-2007 Max Maischein, E<lt>corion@cpan.orgE<gt>
+
+=head1 LICENSE
+
+This module is released under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
-L<Acme::Intraweb>, L<PAR>, L<perlfunc>
+L<Devel::Hide>, L<Acme::Intraweb>, L<PAR>, L<perlfunc>
 
 =cut
 
