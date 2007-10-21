@@ -3,6 +3,11 @@ Revision history for Perl extension Test::Without::Module.
 Todo:
   - Add way to allow only core modules (suggested by SREZIC)
 
+0.15 20071021
+  - Now really restored compatibility of the tests with Perl 5.005,
+    using lexical filehandles does not work under 5.005...
+  . No functional changes, no upgrade is necessary
+
 0.14 20071020
   - Hopefully restored compatibility of the tests with Perl 5.005 this time, reported by SREZIC
   . No functional changes, no upgrade is necessary

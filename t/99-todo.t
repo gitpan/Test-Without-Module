@@ -24,10 +24,11 @@ sub wanted {
 sub source_file_ok {
     my $file = shift;
 
-    my $fh;
-    open( $fh, "<$file" ) or die "Can't open $file: $!";
-    my @lines = <$fh>;
-    close $fh;
+    local *FILE;
+    open FILE, $file
+        or die "Can't open $file: $!";
+    my @lines = <FILE>;
+    close FILE;
 
     my $n = 0;
     for ( @lines ) {

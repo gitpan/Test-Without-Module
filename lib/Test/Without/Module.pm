@@ -3,7 +3,7 @@ use strict;
 use Carp qw( croak );
 
 use vars qw( $VERSION );
-$VERSION = 0.14;
+$VERSION = 0.15;
 
 use vars qw( %forbidden );
 
