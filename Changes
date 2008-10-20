@@ -3,6 +3,11 @@ Revision history for Perl extension Test::Without::Module.
 Todo:
   - Add way to allow only core modules (suggested by SREZIC)
 
+0.16 20081020
+  - Add a test that exhibits the "redefined" warnings upon disallowing
+    and then reallowing a module
+  - Fixed the code so no more warnings get issued. [RT#40065]
+
 0.15 20071021
   - Now really restored compatibility of the tests with Perl 5.005,
     using lexical filehandles does not work under 5.005...

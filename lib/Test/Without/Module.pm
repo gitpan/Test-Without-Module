@@ -3,7 +3,7 @@ use strict;
 use Carp qw( croak );
 
 use vars qw( $VERSION );
-$VERSION = 0.15;
+$VERSION = 0.16;
 
 use vars qw( %forbidden );
 
@@ -15,8 +15,10 @@ sub import {
   my ($self,@forbidden_modules) = @_;
 
   my $forbidden = get_forbidden_list;
-  $forbidden->{$_} = $_
-    for @forbidden_modules;
+  
+  for (@forbidden_modules) {
+      $forbidden->{$_} = $INC{ module2file($_) };
+  };
 
   # Scrub %INC, so that loaded modules disappear
   for my $module (@forbidden_modules) {
@@ -28,14 +30,13 @@ sub import {
 
 sub fake_module {
     my ($self,$module_file,$member_only) = @_;
-    #warn $@ if $@; # Don't touch $@, or .al files will not load anymore????
+    # Don't touch $@, or .al files will not load anymore????
 
     my $forbidden = get_forbidden_list;
 
     my $modulename = file2module($module_file);
 
     # Deliver a faked, nonworking module
-    #if (grep { $modulename =~ /\Q$_\E/ } keys %$forbidden) {
     if (exists $forbidden->{$modulename}) {
       my @faked_module = ("package $modulename;","0;");
       return sub { defined ( $_ = shift @faked_module ) };
@@ -45,11 +46,15 @@ sub fake_module {
 sub unimport {
   my ($self,@list) = @_;
   my $module;
-  my $forbidden = \%forbidden;
+  my $forbidden = get_forbidden_list;
+
   for $module (@list) {
     if (exists $forbidden->{$module}) {
-      delete $forbidden->{$module};
-      scrub( $module );
+      if (defined $forbidden->{$module}) {
+          $INC{ module2file($module) } = delete $forbidden->{$module};
+      } else {
+          delete $forbidden->{$module};
+      };
     } else {
       croak "Can't allow non-forbidden module $module";
     };
@@ -63,13 +68,20 @@ sub file2module {
   $mod;
 };
 
+sub module2file {
+  my ($mod) = @_;
+  $mod =~ s!::|'!/!g;
+  $mod .= ".pm";
+  $mod;
+};
+
 sub scrub {
   my ($module) = @_;
-  my $key;
-  for $key (keys %INC) {
-    delete $INC{$key}
-      if (file2module($key) =~ /\Q$module\E$/);
-      #if (file2module($key) =~ $module);
+  for my $key (keys %INC) {
+    my $fn = file2module($key);
+    if ($fn =~ /\Q$module\E$/) {
+        delete $INC{$key};
+    };
   };
 };
 
