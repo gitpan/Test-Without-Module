@@ -3,7 +3,7 @@ use strict;
 use Carp qw( croak );
 
 use vars qw( $VERSION );
-$VERSION = 0.16;
+$VERSION = '0.17';
 
 use vars qw( %forbidden );
 
@@ -79,7 +79,7 @@ sub scrub {
   my ($module) = @_;
   for my $key (keys %INC) {
     my $fn = file2module($key);
-    if ($fn =~ /\Q$module\E$/) {
+    if ($fn eq $module) {
         delete $INC{$key};
     };
   };
@@ -130,7 +130,7 @@ if you are testing and/or debugging this module.
 =head1 ONE LINER
 
 A neat trick for using this module from the command line
-was mentioned to me by NUFFIN:
+was mentioned to me by NUFFIN and by Jerrad Pierce:
 
   perl -MTest::Without::Module=Some::Module -w -Iblib/lib t/SomeModule.t
 
@@ -141,7 +141,9 @@ when a certain module is unavailable.
 
 =over 4
 
-=item * There is no lexicalic scoping
+=item *
+
+There is no lexical scoping
 
 =back
 
@@ -163,7 +165,7 @@ of a module.
 
 =head1 AUTHOR
 
-Copyright (c) 2003-2007 Max Maischein, E<lt>corion@cpan.orgE<gt>
+Copyright (c) 2003-2009 Max Maischein, E<lt>corion@cpan.orgE<gt>
 
 =head1 LICENSE
 
