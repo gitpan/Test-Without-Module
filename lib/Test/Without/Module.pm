@@ -3,9 +3,9 @@ use strict;
 use Carp qw( croak );
 
 use vars qw( $VERSION );
-$VERSION = '0.17';
+$VERSION = '0.18';
 
-use vars qw( %forbidden );
+use vars qw( %forbidden %fake_modules );
 
 sub get_forbidden_list {
   \%forbidden
@@ -18,6 +18,7 @@ sub import {
   
   for (@forbidden_modules) {
       $forbidden->{$_} = $INC{ module2file($_) };
+      $fake_modules{module2file($_)} = [ "package $_;", "0;" ];
   };
 
   # Scrub %INC, so that loaded modules disappear
@@ -25,20 +26,16 @@ sub import {
     scrub( $module );
   };
 
-  unshift @INC, \&fake_module;
+  @INC = (\&fake_module, grep { !ref || $_ != \&fake_module } @INC);
 };
 
 sub fake_module {
     my ($self,$module_file,$member_only) = @_;
     # Don't touch $@, or .al files will not load anymore????
 
-    my $forbidden = get_forbidden_list;
-
-    my $modulename = file2module($module_file);
-
     # Deliver a faked, nonworking module
-    if (exists $forbidden->{$modulename}) {
-      my @faked_module = ("package $modulename;","0;");
+    if (my $faked = $fake_modules{$module_file}) {
+      my @faked_module = @$faked;
       return sub { defined ( $_ = shift @faked_module ) };
     };
 };
@@ -50,11 +47,12 @@ sub unimport {
 
   for $module (@list) {
     if (exists $forbidden->{$module}) {
-      if (defined $forbidden->{$module}) {
-          $INC{ module2file($module) } = delete $forbidden->{$module};
-      } else {
-          delete $forbidden->{$module};
-      };
+      my $file = module2file($module);
+      delete $fake_modules{$file};
+      my $path = delete $forbidden->{$module};
+      if (defined $path) {
+        $INC{ $file } = $path;
+      }
     } else {
       croak "Can't allow non-forbidden module $module";
     };
@@ -77,12 +75,7 @@ sub module2file {
 
 sub scrub {
   my ($module) = @_;
-  for my $key (keys %INC) {
-    my $fn = file2module($key);
-    if ($fn eq $module) {
-        delete $INC{$key};
-    };
-  };
+  delete $INC{module2file($module)};
 };
 
 1;
@@ -151,7 +144,7 @@ There is no lexical scoping
 
 Much improvement must be thanked to Aristotle from PerlMonks, he pointed me
 to a much less convoluted way to fake a module at
-L<http://www.perlmonks.org/index.pl?node=192635>.
+L<https://perlmonks.org?node=192635>.
 
 I also discussed with him an even more elegant way of overriding
 CORE::GLOBAL::require, but the parsing of the overridden subroutine
@@ -165,11 +158,27 @@ of a module.
 
 =head1 AUTHOR
 
-Copyright (c) 2003-2009 Max Maischein, E<lt>corion@cpan.orgE<gt>
+Copyright (c) 2003-2014 Max Maischein, E<lt>corion@cpan.orgE<gt>
 
 =head1 LICENSE
 
 This module is released under the same terms as Perl itself.
+
+=head1 REPOSITORY
+
+The public repository of this module is
+L<http://github.com/Corion/test-without-module>.
+
+=head1 SUPPORT
+
+The public support forum of this module is
+L<https://perlmonks.org/>.
+
+=head1 BUG TRACKER
+
+Please report bugs in this module via the RT CPAN bug queue at
+L<https://rt.cpan.org/Public/Dist/Display.html?Name=Test-Without-Module>
+or via mail to L<test-without-module-Bugs@rt.cpan.org>.
 
 =head1 SEE ALSO
 

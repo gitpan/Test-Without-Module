@@ -3,7 +3,12 @@ Revision history for Perl extension Test::Without::Module.
 Todo:
   - Add way to allow only core modules (suggested by SREZIC)
 
-0.17 xxxxxxxx
+0.18 20140830
+  - Eliminate segfault on Perl 5.8 (by Graham Knop, Karen Etheridge, RT 98207)
+  - Only add the @INC hook once (by Graham Knop, RT #91857)
+  - Updated documentation
+
+0.17 20090118
   - Made license explicit in the metadata (for those versions
     of EU:MM that support it)
   ! Changed module comparison from using a regular expression
